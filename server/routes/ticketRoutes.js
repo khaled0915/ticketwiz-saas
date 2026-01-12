@@ -70,4 +70,21 @@ router.post('/create', authMiddleware, async (req, res) => {
     }
 });
 
+
+// GET /api/tickets - Fetch all tickets for the user's organization
+router.get('/', authMiddleware, async (req, res) => {
+    try {
+        const [tickets] = await pool.query(
+            'SELECT * FROM tickets WHERE organization_id = ? ORDER BY created_at DESC', 
+            [req.user.organization_id]
+        );
+        res.json(tickets);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+
+
+
 module.exports = router;
