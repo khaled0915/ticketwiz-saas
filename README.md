@@ -23,7 +23,7 @@ TicketWiz is a Multi-Tenant B2B SaaS platform that automates customer support tr
 
 ## 📸 Screenshots
 
-*(Add a screenshot of your Dashboard here later)*
+
 
 ## 📦 How to Run
 
@@ -109,9 +109,7 @@ When a ticket is created, the AI automatically analyzes:
 - **Sentiment Score:** Float from -1 (angry) to 1 (happy)
 - **Priority:** Automatically assigned as `high`, `medium`, or `low`
 
-## 📄 License
 
-MIT License
 
 ## 👤 Author
 
