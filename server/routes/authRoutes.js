@@ -89,4 +89,29 @@ res.status(500).json({ error: error.message }); // Send the actual error to Post
     }
 });
 
+// POST /login - Login user
+router.post('/login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        const [users] = await pool.query('SELECT * FROM users WHERE email = ?', [email]);
+        if (users.length === 0) return res.status(401).json({ error: 'Invalid credentials' });
+        
+        const user = users[0];
+        const isMatch = await bcrypt.compare(password, user.password_hash);
+        if (!isMatch) return res.status(401).json({ error: 'Invalid credentials' });
+
+        const token = jwt.sign(
+            { id: user.id, role: user.role, organization_id: user.organization_id },
+            process.env.JWT_SECRET,
+            { expiresIn: '24h' }
+        );
+
+        res.json({ token, user });
+    } catch (error) {
+        console.error("Login Error:", error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+
 module.exports = router;
