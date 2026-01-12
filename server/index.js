@@ -1,8 +1,10 @@
 const express = require('express');
 const app = express();
-const db = require('./config/db'); // Import your database connection
+const db = require('./config/db'); 
 require('dotenv').config();
 const cors = require('cors');
+
+const ticketRoutes = require('./routes/ticketRoutes');
 
 // Middleware
 app.use(express.json());
@@ -10,15 +12,15 @@ app.use(cors());
 
 
 
-// 👇 ADD THIS DEBUG BLOCK 👇
+
 app.use((req, res, next) => {
     console.log(`➡️  Method: ${req.method} | URL: ${req.url}`);
     console.log('📝 Content-Type:', req.get('Content-Type')); // This MUST say application/json
-    console.log('📦 Body:', req.body); // This should show your data
+    console.log('📦 Body:', req.body); 
     next();
 });
-// 👆 END DEBUG BLOCK 👆
 
+app.use('/api/tickets', ticketRoutes);
 
 const PORT = process.env.PORT || 5000;
 
@@ -28,8 +30,13 @@ app.get('/', (req, res) => {
 });
 
 
+
+
+
 const authRoutes = require('./routes/authRoutes');
 app.use('/api/auth', authRoutes);
+
+app.use('/api/tickets', ticketRoutes);
 
 
 // Start Server and Test DB
