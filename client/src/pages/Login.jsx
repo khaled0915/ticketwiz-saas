@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import api from '../api';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { Ticket, Lock, Mail } from 'lucide-react';
+import { Ticket, Lock, Mail, ArrowLeft } from 'lucide-react';
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -26,7 +26,18 @@ const Login = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-900 to-gray-900 flex items-center justify-center p-4">
+        <div className="min-h-screen bg-gradient-to-br from-blue-900 to-gray-900 flex items-center justify-center p-4 ">
+
+                        <div className="absolute  top-4 left-4">
+                <Link to="/" className="flex items-center border  rounded-lg p-2 border-white gap-2 text-white hover:text-pink-700 transition-colors">
+                    <ArrowLeft className="w-4 h-4" /> Back to Home
+                </Link>
+            </div>
+
+
+
+
+
             <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
                 <div className="p-8">
                     <div className="flex justify-center mb-6">

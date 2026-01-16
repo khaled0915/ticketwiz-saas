@@ -27,22 +27,23 @@ import { Toaster } from 'react-hot-toast';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import SupportPage from './pages/SupportPage';
+import Home from './pages/Home'; 
 
 function App() {
   return (
     <BrowserRouter>
-      {/* Toaster handles the popup notifications */}
       <Toaster position="top-center" />
       
       <Routes>
-        <Route path="/login" element={<Login />} />
-        {/* Placeholder for Dashboard */}
-        <Route path="/dashboard" element={<Dashboard />} />
         
-        {/* Redirect empty path to login */}
-        <Route path="*" element={<Navigate to="/login" />} />
-
+        <Route path="/" element={<Home />} />
+        
+        <Route path="/login" element={<Login />} />
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/support" element={<SupportPage />} />
+        
+        
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </BrowserRouter>
   );
