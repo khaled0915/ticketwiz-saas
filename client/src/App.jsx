@@ -26,6 +26,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
+import SupportPage from './pages/SupportPage';
 
 function App() {
   return (
@@ -35,11 +36,13 @@ function App() {
       
       <Routes>
         <Route path="/login" element={<Login />} />
-        {/* Placeholder for Dashboard (we will build this next) */}
+        {/* Placeholder for Dashboard */}
         <Route path="/dashboard" element={<Dashboard />} />
         
         {/* Redirect empty path to login */}
         <Route path="*" element={<Navigate to="/login" />} />
+
+        <Route path="/support" element={<SupportPage />} />
       </Routes>
     </BrowserRouter>
   );

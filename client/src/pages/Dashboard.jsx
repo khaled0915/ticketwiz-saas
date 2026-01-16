@@ -12,10 +12,22 @@ const Dashboard = () => {
     const navigate = useNavigate();
     const user = JSON.parse(localStorage.getItem('user'));
 
-    // Fetch Tickets on Load
+   
+
+    // Fetch Tickets on Load AND every 2 seconds
     useEffect(() => {
-        fetchTickets();
+        fetchTickets(); // Initial fetch
+
+        // Set up a timer to fetch data every 2000ms (2 seconds)
+        const interval = setInterval(() => {
+            fetchTickets();
+        }, 2000);
+
+        // Cleanup the timer when we leave the page
+        return () => clearInterval(interval);
     }, []);
+
+
 
     const fetchTickets = async () => {
         try {
@@ -169,6 +181,37 @@ const Dashboard = () => {
                                         "{ticket.ai_suggested_solution || 'No suggestion available.'}"
                                     </p>
                                 </div>
+
+
+
+
+
+
+                           
+<div className="mt-4 pt-4 border-t border-gray-100 flex justify-end">
+    {ticket.status !== 'resolved' ? (
+        <button 
+            onClick={async () => {
+               await api.put(`/tickets/${ticket.id}/status`, { status: 'resolved' });
+               fetchTickets(); // Refresh list
+               toast.success('Ticket Resolved!');
+            }}
+            className="text-sm bg-gray-100 hover:bg-green-100 text-gray-600 hover:text-green-700 px-3 py-1 rounded-md border border-gray-200 transition-colors"
+        >
+            Mark as Resolved
+        </button>
+    ) : (
+        <span className="text-sm text-green-600 font-medium flex items-center gap-1">
+            <CheckCircle className="w-4 h-4" /> Resolved
+        </span>
+    )}
+</div>
+
+
+
+
+
+
                             </div>
                         ))}
                     </div>
