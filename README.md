@@ -7,9 +7,11 @@ TicketWiz is a Multi-Tenant B2B SaaS platform that automates customer support tr
 
 ## 🚀 Key Features
 
-*   **🤖 AI Autopilot:** Integrates **Google Gemini 2.0** to read tickets and generate instant JSON analysis.
+*   **🤖 AI Autopilot:** Integrates **Google Gemini (Flash Model)** to read tickets and generate instant JSON analysis.
 *   **📊 Smart Triage:** Automatically flags "High Priority" tickets based on context (e.g., "Refund", "Fire", "Server Down").
 *   **❤️ Sentiment Detection:** Visualizes customer emotions (Red = Angry, Green = Happy) to help agents respond appropriately.
+*   **📢 Public Support Portal:** Dedicated page for external customers to submit tickets without logging in.
+*   **⚡ Real-Time Dashboard:** Auto-refreshing agent interface to see tickets instantly as they arrive.
 *   **🏢 Multi-Tenancy:** Single database supporting multiple isolated organizations (SaaS Architecture).
 *   **🔐 Secure Auth:** JWT-based authentication with Bcrypt password hashing.
 
@@ -18,10 +20,8 @@ TicketWiz is a Multi-Tenant B2B SaaS platform that automates customer support tr
 *   **Frontend:** React.js, Tailwind CSS, Vite, Axios, React Router.
 *   **Backend:** Node.js, Express.js.
 *   **Database:** MySQL (Relational Schema).
-*   **AI Engine:** Google Gemini API (v2 Flash).
+*   **AI Engine:** Google Gemini API.
 *   **Tools:** Thunder Client, Git.
-
-## 📸 Screenshots
 
 
 
@@ -32,7 +32,11 @@ TicketWiz is a Multi-Tenant B2B SaaS platform that automates customer support tr
     git clone https://github.com/khaled0915/ticketwiz-saas.git
     ```
 
-2.  **Setup Backend:**
+2.  **Setup Database:**
+    - Create a MySQL database named `ticketwiz_saas`.
+    - Import the `server/schema.sql` file into MySQL to create tables (organizations, users, tickets).
+
+3.  **Setup Backend:**
     ```bash
     cd server
     npm install
@@ -40,13 +44,13 @@ TicketWiz is a Multi-Tenant B2B SaaS platform that automates customer support tr
     
     Create a `.env` file in the server folder:
     ```env
+    PORT=5000
     DB_HOST=localhost
     DB_USER=root
-    DB_PASSWORD=
-    DB_NAME=ticketwiz
-    JWT_SECRET=your_jwt_secret_key
-    GEMINI_API_KEY=your_gemini_api_key
-    OPENAI_API_KEY=your_openai_api_key
+    DB_PASS=
+    DB_NAME=ticketwiz_saas
+    JWT_SECRET=your_super_secret_key_here
+    GEMINI_API_KEY=your_google_gemini_key_here
     ```
     
     Run the server:
@@ -54,41 +58,15 @@ TicketWiz is a Multi-Tenant B2B SaaS platform that automates customer support tr
     npm start
     ```
 
-3.  **Setup Frontend:**
+4.  **Setup Frontend:**
     ```bash
     cd client
     npm install
     npm run dev
     ```
+    Access the app at `http://localhost:5173`.
 
-4.  **Setup Database:**
-    - Import `server/schema.sql` into MySQL to create the database and tables.
 
-## 📁 Project Structure
-
-```
-ticketwiz-saas/
-├── client/                 # React Frontend
-│   ├── src/
-│   │   ├── pages/          # Login, Dashboard components
-│   │   ├── api.js          # Axios instance
-│   │   └── App.jsx         # React Router setup
-│   └── package.json
-├── server/                 # Express Backend
-│   ├── config/
-│   │   ├── db.js           # MySQL connection pool
-│   │   ├── openai.js       # OpenAI client
-│   │   └── gemini.js       # Google Gemini client
-│   ├── middleware/
-│   │   └── authMiddleware.js
-│   ├── routes/
-│   │   ├── authRoutes.js   # Login, Register
-│   │   └── ticketRoutes.js # Ticket CRUD with AI
-│   ├── schema.sql          # Database schema
-│   └── package.json
-├── .gitignore
-└── README.md
-```
 
 ## 🔑 API Endpoints
 
@@ -101,15 +79,17 @@ ticketwiz-saas/
 ### Ticket Routes (`/api/tickets`)
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| POST | `/create` | Create ticket with AI analysis |
+| GET  | `/` | Fetch all tickets for logged-in organization |
+| POST | `/create` | Create ticket (Internal Agent) |
+| POST | `/public/:orgId` | Create ticket (Public Customer) - No Auth |
+| PUT  | `/:id/status` | Mark ticket as Resolved |
 
 ## 🧠 AI Analysis
 
-When a ticket is created, the AI automatically analyzes:
-- **Sentiment Score:** Float from -1 (angry) to 1 (happy)
-- **Priority:** Automatically assigned as `high`, `medium`, or `low`
-
-
+When a ticket is created, the AI automatically analyzes the text and generates:
+- **Sentiment Score:** Float from -1 (angry) to 1 (happy).
+- **Priority:** Automatically assigned as `high`, `medium`, or `low`.
+- **Suggested Solution:** A short, actionable advice string for the agent.
 
 ## 👤 Author
 
