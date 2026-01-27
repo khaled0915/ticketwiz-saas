@@ -74,14 +74,36 @@ router.post('/create', authMiddleware, async (req, res) => {
 
 
 // GET /api/tickets - Fetch all tickets for the user's organization
+// router.get('/', authMiddleware, async (req, res) => {
+//     try {
+//         const [tickets] = await pool.query(
+//             'SELECT * FROM tickets WHERE organization_id = ? ORDER BY created_at DESC', 
+//             [req.user.organization_id]
+//         );
+//         res.json(tickets);
+//     } catch (error) {
+//         res.status(500).json({ error: error.message });
+//     }
+// });
+
+// GET /api/tickets
 router.get('/', authMiddleware, async (req, res) => {
     try {
+        // We do a LEFT JOIN to get user details IF they exist
+        // For public tickets (user_id is NULL), use customer_email/customer_name
         const [tickets] = await pool.query(
-            'SELECT * FROM tickets WHERE organization_id = ? ORDER BY created_at DESC', 
+            `SELECT t.*, 
+                    COALESCE(u.name, t.customer_name) as reporter_name, 
+                    COALESCE(u.email, t.customer_email) as reporter_email 
+             FROM tickets t 
+             LEFT JOIN users u ON t.user_id = u.id 
+             WHERE t.organization_id = ? 
+             ORDER BY t.created_at DESC`, 
             [req.user.organization_id]
         );
         res.json(tickets);
     } catch (error) {
+        console.error("❌ GET /tickets Error:", error);
         res.status(500).json({ error: error.message });
     }
 });
@@ -90,11 +112,10 @@ router.get('/', authMiddleware, async (req, res) => {
 
 
 
-
 // POST /api/tickets/public/:orgId (No Auth Required)
 router.post('/public/:orgId', async (req, res) => {
     try {
-        const { title, description, customer_email } = req.body;
+        const { title, description, customer_email, customer_name } = req.body;
         const orgId = req.params.orgId;
 
         console.log("📨 Received Public Ticket:", title);
@@ -145,15 +166,17 @@ router.post('/public/:orgId', async (req, res) => {
 
         // 2. Insert Ticket
         const [result] = await pool.query(
-            'INSERT INTO tickets (organization_id, user_id, title, description, status, priority, sentiment_score, ai_suggested_solution) VALUES (?, NULL, ?, ?, ?, ?, ?, ?)',
+            'INSERT INTO tickets (organization_id, user_id, title, description, status, priority, sentiment_score, ai_suggested_solution, customer_email, customer_name) VALUES (?, NULL, ?, ?, ?, ?, ?, ?, ?, ?)',
             [
                 orgId,
                 title,
-                description + (customer_email ? ` [Contact: ${customer_email}]` : ''),
+                description,
                 'open',
                 aiData.priority || 'medium',
                 aiData.sentiment_score || 0,
-                aiData.suggested_solution || 'Manual review.'
+                aiData.suggested_solution || 'Manual review.',
+                customer_email || null,
+                customer_name || null
             ]
         );
 

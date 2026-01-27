@@ -34,19 +34,21 @@ CREATE TABLE users (
 CREATE TABLE tickets (
     id INT AUTO_INCREMENT PRIMARY KEY,
     organization_id INT NOT NULL,
-    user_id INT NOT NULL,
+    user_id INT DEFAULT NULL,
     title VARCHAR(255) NOT NULL,
     description TEXT,
-    status ENUM('open', 'closed') NOT NULL DEFAULT 'open',
+    status ENUM('open', 'closed', 'resolved') NOT NULL DEFAULT 'open',
     priority ENUM('high', 'medium', 'low') NOT NULL DEFAULT 'medium',
     sentiment_score FLOAT DEFAULT NULL,
+    ai_suggested_solution TEXT DEFAULT NULL,
+    customer_email VARCHAR(255) DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     INDEX idx_organization (organization_id),
     INDEX idx_user (user_id),
     INDEX idx_status (status),
     INDEX idx_priority (priority),
     FOREIGN KEY (organization_id) REFERENCES organizations(id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
 );
 
 -- Messages table

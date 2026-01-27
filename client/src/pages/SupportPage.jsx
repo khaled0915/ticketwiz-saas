@@ -2,13 +2,18 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios'; // Direct axios because we don't need the Interceptor/Token
 import toast from 'react-hot-toast';
-import { Send, LifeBuoy, ArrowLeft, Mail, FileText, MessageSquare, Loader2 } from 'lucide-react';
+import { Send, LifeBuoy, ArrowLeft, Mail, FileText, MessageSquare, Loader2, User } from 'lucide-react';
 
 const SupportPage = () => {
     // Hardcoded Org ID for demo (In real life, read from URL param)
     const ORG_ID = 6 // CHANGE THIS TO YOUR ORGANIZATION ID (Check your DB or Dashboard)
     
-    const [formData, setFormData] = useState({ title: '', description: '', email: '' });
+    const [formData, setFormData] = useState({ 
+        title: '', 
+        description: '', 
+        customer_name: '',
+        customer_email: '' 
+    });
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleSubmit = async (e) => {
@@ -20,7 +25,7 @@ const SupportPage = () => {
             // Using the full URL because this page might be "public"
             await axios.post(`http://localhost:5000/api/tickets/public/${ORG_ID}`, formData);
             toast.success('Ticket received! An agent will review it.', { id: toastId });
-            setFormData({ title: '', description: '', email: '' });
+            setFormData({ title: '', description: '', customer_name: '', customer_email: '' });
         } catch (error) {
             toast.error('Failed to submit ticket', { id: toastId });
         } finally {
@@ -55,9 +60,25 @@ const SupportPage = () => {
                     
                     {/* Form */}
                     <form onSubmit={handleSubmit} className="p-5 md:p-8 space-y-4 md:space-y-5">
+                        {/* Name Input */}
+                        <div className="space-y-1.5">
+                            <label className="block text-sm font-semibold text-gray-700">Your Name <span className="text-red-500">*</span></label>
+                            <div className="relative group">
+                                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
+                                <input 
+                                    type="text" 
+                                    required 
+                                    placeholder="John Doe"
+                                    className="w-full pl-11 pr-4 py-2.5 md:py-3 text-sm md:text-base border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all bg-gray-50 focus:bg-white"
+                                    value={formData.customer_name} 
+                                    onChange={e => setFormData({...formData, customer_name: e.target.value})} 
+                                />
+                            </div>
+                        </div>
+
                         {/* Email Input */}
                         <div className="space-y-1.5">
-                            <label className="block text-sm font-semibold text-gray-700">Your Email</label>
+                            <label className="block text-sm font-semibold text-gray-700">Your Email <span className="text-red-500">*</span></label>
                             <div className="relative group">
                                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
                                 <input 
@@ -65,15 +86,15 @@ const SupportPage = () => {
                                     required 
                                     placeholder="you@example.com"
                                     className="w-full pl-11 pr-4 py-2.5 md:py-3 text-sm md:text-base border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all bg-gray-50 focus:bg-white"
-                                    value={formData.email} 
-                                    onChange={e => setFormData({...formData, email: e.target.value})} 
+                                    value={formData.customer_email} 
+                                    onChange={e => setFormData({...formData, customer_email: e.target.value})} 
                                 />
                             </div>
                         </div>
 
                         {/* Subject Input */}
                         <div className="space-y-1.5">
-                            <label className="block text-sm font-semibold text-gray-700">Subject</label>
+                            <label className="block text-sm font-semibold text-gray-700">Subject <span className="text-red-500">*</span></label>
                             <div className="relative group">
                                 <FileText className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
                                 <input 

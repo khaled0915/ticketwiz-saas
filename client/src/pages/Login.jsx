@@ -2,15 +2,17 @@ import { useState } from 'react';
 import api from '../api';
 import { useNavigate, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { Ticket, Lock, Mail, ArrowLeft } from 'lucide-react';
+import { Ticket, Lock, Mail, ArrowLeft, Loader2 } from 'lucide-react';
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
     const handleLogin = async (e) => {
         e.preventDefault();
+        setIsLoading(true);
         try {
             const res = await api.post('/auth/login', { email, password });
             
@@ -22,72 +24,91 @@ const Login = () => {
             navigate('/dashboard');
         } catch (error) {
             toast.error(error.response?.data?.error || 'Login failed');
+        } finally {
+            setIsLoading(false);
         }
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-900 to-gray-900 flex items-center justify-center p-4 ">
-
-                        <div className="absolute  top-4 left-4">
-                <Link to="/" className="flex items-center border  rounded-lg p-2 border-white gap-2 text-white hover:text-pink-700 transition-colors">
-                    <ArrowLeft className="w-4 h-4" /> Back to Home
+        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex flex-col p-4 md:p-8">
+            {/* Back to Home */}
+            <div className="mb-6 md:mb-8">
+                <Link 
+                    to="/" 
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 backdrop-blur-sm text-slate-300 hover:text-white hover:bg-white/20 transition-all duration-200"
+                >
+                    <ArrowLeft className="w-4 h-4" />
+                    <span className="text-sm font-medium">Back to Home</span>
                 </Link>
             </div>
 
-
-
-
-
-            <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
-                <div className="p-8">
-                    <div className="flex justify-center mb-6">
-                        <div className="bg-blue-100 p-3 rounded-full">
-                            <Ticket className="w-8 h-8 text-blue-600" />
+            {/* Main Card - Centered */}
+            <div className="flex-1 flex items-center justify-center">
+                <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+                    {/* Header */}
+                    <div className="p-6 md:p-8 text-center bg-gradient-to-r from-blue-600 to-blue-700">
+                        <div className="inline-flex items-center justify-center w-14 h-14 md:w-16 md:h-16 bg-white/20 backdrop-blur-sm rounded-full mb-4">
+                            <Ticket className="w-7 h-7 md:w-8 md:h-8 text-white" />
                         </div>
+                        <h1 className="text-xl md:text-2xl font-bold text-white mb-1">Welcome Back</h1>
+                        <p className="text-blue-100 text-sm md:text-base">Sign in to your TicketWiz account</p>
                     </div>
-                    <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">TicketWiz Login</h2>
                     
-                    <form onSubmit={handleLogin} className="space-y-6">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
-                            <div className="relative">
-                                <Mail className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+                    {/* Form */}
+                    <form onSubmit={handleLogin} className="p-5 md:p-8 space-y-4 md:space-y-5">
+                        {/* Email Input */}
+                        <div className="space-y-1.5">
+                            <label className="block text-sm font-semibold text-gray-700">Email Address</label>
+                            <div className="relative group">
+                                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
                                 <input 
                                     type="email" 
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                                    className="w-full pl-11 pr-4 py-2.5 md:py-3 text-sm md:text-base border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all bg-gray-50 focus:bg-white"
                                     placeholder="you@company.com"
                                     required
                                 />
                             </div>
                         </div>
 
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
-                            <div className="relative">
-                                <Lock className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+                        {/* Password Input */}
+                        <div className="space-y-1.5">
+                            <label className="block text-sm font-semibold text-gray-700">Password</label>
+                            <div className="relative group">
+                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
                                 <input 
                                     type="password" 
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                                    className="w-full pl-11 pr-4 py-2.5 md:py-3 text-sm md:text-base border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all bg-gray-50 focus:bg-white"
                                     placeholder="••••••••"
                                     required
                                 />
                             </div>
                         </div>
 
+                        {/* Submit Button */}
                         <button 
                             type="submit" 
-                            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors duration-200 shadow-lg"
+                            disabled={isLoading}
+                            className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 disabled:from-blue-400 disabled:to-blue-400 disabled:cursor-not-allowed text-white font-semibold py-3 md:py-3.5 rounded-xl flex items-center justify-center gap-2 transition-all duration-300 shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30 active:scale-[0.98]"
                         >
-                            Sign In
+                            {isLoading ? (
+                                <>
+                                    <Loader2 className="w-5 h-5 animate-spin" />
+                                    <span>Signing in...</span>
+                                </>
+                            ) : (
+                                <span>Sign In</span>
+                            )}
                         </button>
                     </form>
-                </div>
-                <div className="bg-gray-50 px-8 py-4 border-t border-gray-100 text-center">
-                    <p className="text-sm text-gray-500">Don't have an account? Ask your admin.</p>
+
+                    {/* Footer */}
+                    <div className="bg-gray-50 px-5 md:px-8 py-3 md:py-4 border-t border-gray-100 text-center">
+                        <p className="text-xs md:text-sm text-gray-500">Don't have an account? Contact your admin.</p>
+                    </div>
                 </div>
             </div>
         </div>
