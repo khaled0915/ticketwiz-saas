@@ -68,21 +68,7 @@ TicketWiz is a Multi-Tenant B2B SaaS platform that automates customer support tr
 
 
 
-## 🔑 API Endpoints
 
-### Auth Routes (`/api/auth`)
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/register-saas` | Register new organization + admin |
-| POST | `/login` | Login user |
-
-### Ticket Routes (`/api/tickets`)
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET  | `/` | Fetch all tickets for logged-in organization |
-| POST | `/create` | Create ticket (Internal Agent) |
-| POST | `/public/:orgId` | Create ticket (Public Customer) - No Auth |
-| PUT  | `/:id/status` | Mark ticket as Resolved |
 
 ## 🧠 AI Analysis
 
